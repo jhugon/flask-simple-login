@@ -1,2 +1,2 @@
 # flask-simple-login
-Simple Login 
+Simple Login

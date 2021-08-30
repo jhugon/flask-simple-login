@@ -14,17 +14,22 @@ login_manager.init_app(app)
 
 toolbar = DebugToolbarExtension(app)
 
+
 class User(UserMixin):
     def __init__(self):
         pass
 
-class LoginForm(Form)
+
+class LoginForm(Form):
+    pass
+
 
 @app.route("/")
 def hello_world():
     return "<html>\n<head></head>\n<body>\n<p>Hello, World!</p>\n</body>\n</html>"
 
-@app.route('/login', methods=['GET', 'POST'])
+
+@app.route("/login", methods=["GET", "POST"])
 def login():
     # Here we use a class of some kind to represent and validate our
     # client-side form data. For example, WTForms is a library that will
@@ -35,16 +40,17 @@ def login():
         # user should be an instance of your `User` class
         login_user(user)
 
-        flask.flash('Logged in successfully.')
+        flask.flash("Logged in successfully.")
 
-        next = flask.request.args.get('next')
+        next = flask.request.args.get("next")
         # is_safe_url should check if the url is safe for redirects.
         # See http://flask.pocoo.org/snippets/62/ for an example.
         if not is_safe_url(next):
             return flask.abort(400)
 
-        return flask.redirect(next or flask.url_for('index'))
-    return flask.render_template('login.html', form=form)
+        return flask.redirect(next or flask.url_for("index"))
+    return flask.render_template("login.html", form=form)
+
 
 @app.route("/logout")
 @login_required
