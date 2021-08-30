@@ -128,5 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+### My stuff
 .*.un~
 .*.swp
+userfile.txt

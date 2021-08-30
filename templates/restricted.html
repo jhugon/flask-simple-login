@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Restricted Page{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+    <h1>Restricted</h1>
+    <p>Super secret page! You should only see this if you are logged in</p>
+    <p>You are logged in as: "{{ current_user.username }}"</p>
+{% endblock %}

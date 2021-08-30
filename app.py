@@ -1,6 +1,13 @@
 import flask
 from flask import Flask
-from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
+from flask_login import (
+    LoginManager,
+    UserMixin,
+    login_user,
+    logout_user,
+    login_required,
+    current_user,
+)
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField
 from wtforms.validators import DataRequired
@@ -111,15 +118,15 @@ def make_user_file_line(username, password):
 @app.route("/")
 @app.route("/index")
 @app.route("/index.html")
-def hello_world():
-    return "<html>\n<head></head>\n<body>\n<p>Hello, World!</p>\n</body>\n</html>"
+def index():
+    return flask.render_template("index.html")
 
 
 @app.route("/restricted")
 @app.route("/restricted.html")
 @login_required
 def restricted():
-    return "<html>\n<head></head>\n<body>\n<p>This page is restricted. You should only see it if you are logged in.</p>\n</body>\n</html>"
+    return flask.render_template("restricted.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -148,7 +155,7 @@ def login():
         if not is_safe_url(next):
             return flask.abort(400)
 
-        return flask.redirect(next or flask.url_for("login"))
+        return flask.redirect(next or flask.url_for("index"))
     return flask.render_template("login.html", form=form)
 
 
@@ -158,5 +165,6 @@ def logout():
     form = LogoutForm()
     if form.validate_on_submit():
         logout_user()
-        return flask.redirect(flask.url_for("login"))
+        flask.flash("You have been logged out.")
+        return flask.redirect(flask.url_for("index"))
     return flask.render_template("logout.html", form=form)
