@@ -101,7 +101,7 @@ def make_user_file_line(username, password):
         raise Exception(
             f'Error: username "{username}" should be between 3 and 30 characters long.'
         )
-    if len(password) < 8 or len(password) > 30:
+    if len(password) < 3 or len(password) > 30:
         raise Exception(f"Error: password should be between 8 and 30 characters long.")
     for x in username:
         if x in string.whitespace or not (x in string.printable):
@@ -117,17 +117,24 @@ def make_user_file_line(username, password):
             raise Exception(
                 f'Error: passwordHash "{username}" contains a space or non-printable characters. This is not allowed.'
             )
-    result += passwordHash + "\n"
+    result += passwordHash
     return result
 
 
 def print_user_file_line_command():
     import argparse
+    import getpass
 
-    parser = argparse.ArgumentParser(description="Print a user file line")
-    parser.add_argument("username", help="The username")
-    parser.add_argument("password", help="The password")
-
+    parser = argparse.ArgumentParser(
+        description="Asks for a username and password (entered 2 times to check for consistency) and generates a line suitable for the user file"
+    )
     args = parser.parse_args()
-    print(args.username, args.password)
-    make_user_file_line(args.username, args.password)
+
+    username = input("Enter username: ")
+    password1 = getpass.getpass("Enter password: ")
+    password2 = getpass.getpass("Re-enter password: ")
+    if password1 != password2:
+        print("Passwords don't match!")
+        return
+    line = make_user_file_line(username, password1)
+    print(line)
