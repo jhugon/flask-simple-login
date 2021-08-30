@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Logout Page</title>
+  </head>
+  <body>
+    <div>
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <ul class=flashes>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+    </div>
+    <div>
+      <h1>Logout</h1>
+      {% if error %}
+        <p class=error><strong>Error:</strong> {{ error }}
+      {% endif %}
+      <form method="POST" action="/logout">
+          {{ form.csrf_token }}
+          <input type="submit" value="Go">
+      </form>
+    </div>
+  </body>
+</html>
