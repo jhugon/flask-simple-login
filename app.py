@@ -1,5 +1,6 @@
 import flask
 from flask import Flask
+from flask_talisman import Talisman
 from flask_debugtoolbar import DebugToolbarExtension
 
 from flask_simple_login import (
@@ -12,9 +13,11 @@ from flask_simple_login import (
 )
 
 app = Flask(__name__)
+# Talisman(app)
 
 app.debug = True
 app.config["SECRET_KEY"] = b"dummy"
+app.config["SESSION_PROTECTION"] = "strong"
 
 login_manager = LoginManager()
 login_manager.init_app(app)
