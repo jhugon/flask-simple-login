@@ -124,6 +124,10 @@ def make_user_file_line(username, password):
 def print_user_file_line_command():
     import argparse
     import getpass
+    import sys
+
+    tempOut = sys.stdout
+    sys.stdout = sys.stderr
 
     parser = argparse.ArgumentParser(
         description="Asks for a username and password (entered 2 times to check for consistency) and generates a line suitable for the user file"
@@ -137,4 +141,5 @@ def print_user_file_line_command():
         print("Passwords don't match!")
         return
     line = make_user_file_line(username, password1)
+    sys.stdout = tempOut
     print(line)
