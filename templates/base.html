@@ -17,9 +17,9 @@
           </ul>
           {% if (current_user.is_authenticated and current_user.is_active) %}
             <button class="btn btn-success disabled" role="button">Login</button>
-            <a class="btn btn-danger" href="/logout" role="button">Logout</a>
+            <a class="btn btn-danger" href="{{url_for('auth.logout')}}" role="button">Logout</a>
           {% else %}
-            <a class="btn btn-success" href="/login" role="button">Login</a>
+            <a class="btn btn-success" href="{{url_for('auth.login')}}" role="button">Login</a>
             <button class="btn btn-danger disabled" role="button">Logout</button>
           {% endif %}
         </div>

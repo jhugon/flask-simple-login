@@ -8,7 +8,7 @@
     {% if error %}
       <p class=error><strong>Error:</strong> {{ error }}
     {% endif %}
-    <form method="POST" action="/login">
+    <form method="POST" action="{{url_for('auth.login')}}">
         {{ form.csrf_token }}
         {{ form.username.label }} {{ form.username }}
         {{ form.password.label }} {{ form.password }}

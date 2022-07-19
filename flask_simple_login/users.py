@@ -20,7 +20,7 @@ def do_login(template_name, redirect_to_on_success):
         if not User.authenticate_user_password(username, password):
             print("Login failed")
             flask.flash("Incorrect username and/or password.")
-            return flask.redirect(flask.url_for("login"))
+            return flask.redirect(flask.url_for("auth.login"))
         user = User(username)
         login_user(user)
 

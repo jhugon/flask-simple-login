@@ -8,7 +8,7 @@
     {% if error %}
       <p class=error><strong>Error:</strong> {{ error }}
     {% endif %}
-    <form method="POST" action="/logout">
+    <form method="POST" action="{{url_for('auth.logout')}}">
         {{ form.csrf_token }}
         <input type="submit" value="Click here to logout">
     </form>

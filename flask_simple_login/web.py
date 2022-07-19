@@ -1,0 +1,28 @@
+import flask
+from flask import Blueprint
+
+from .users import (
+    User,
+    do_login,
+    do_logout,
+    is_safe_url,
+    login_required,
+)
+
+auth = Blueprint("auth",__name__,url_prefix='/auth')
+# Talisman(app)
+
+
+@auth.route("/login", methods=["GET", "POST"])
+def login():
+    next = flask.request.args.get("next")
+    if not is_safe_url(next):
+        return flask.abort(400)
+    return do_login("login.html", next or flask.url_for("index"))
+
+
+@auth.route("/logout", methods=["GET", "POST"])
+@login_required
+def logout():
+    redirect_to = flask.url_for("index")
+    return do_logout("logout.html", redirect_to)
