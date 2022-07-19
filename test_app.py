@@ -4,21 +4,17 @@ from flask_talisman import Talisman
 from flask_debugtoolbar import DebugToolbarExtension
 
 from flask_simple_login import (
-    LoginManager,
+    login_manager,
+    auth,
     User,
     login_required,
-    auth,
 )
 
 app = Flask(__name__)
 # Talisman(app)
 
 app.register_blueprint(auth)
-login_manager = LoginManager()
 login_manager.init_app(app)
-@login_manager.user_loader
-def load_user(user_id):
-    return User(user_id)
 
 app.debug = True
 app.config["SECRET_KEY"] = b"dummy"

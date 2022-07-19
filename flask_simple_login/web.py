@@ -1,16 +1,16 @@
 import flask
 from flask import Blueprint
 
-from .users import (
-    User,
-    do_login,
-    do_logout,
-    is_safe_url,
-    login_required,
-)
+from .users import User, do_login, do_logout, is_safe_url, login_required, LoginManager
 
-auth = Blueprint("auth",__name__,url_prefix='/auth')
-# Talisman(app)
+auth = Blueprint("auth", __name__, url_prefix="/auth")
+
+login_manager = LoginManager()
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User(user_id)
 
 
 @auth.route("/login", methods=["GET", "POST"])
