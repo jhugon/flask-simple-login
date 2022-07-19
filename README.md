@@ -48,6 +48,12 @@ login_manager.init_app(app)
 Make sure to set a secure secret key like:
 
 ```python
-app.config["SECRET_KEY"] = b"dummy"
+app.config["SECRET_KEY"] = b"<secure key>"
 app.config["SESSION_PROTECTION"] = "strong"
+```
+
+Generate a key with :
+
+```bash
+python -c 'import secrets; print(secrets.token_hex())'
 ```
