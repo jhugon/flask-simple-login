@@ -6,6 +6,7 @@ from .users import User, do_login, do_logout, is_safe_url, login_required, Login
 auth = Blueprint("auth", __name__, url_prefix="/auth")
 
 login_manager = LoginManager()
+login_manager.login_view = "auth.login"
 
 
 @login_manager.user_loader
