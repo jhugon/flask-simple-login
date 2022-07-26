@@ -19,6 +19,7 @@ login_manager.init_app(app)
 app.debug = True
 app.config["SECRET_KEY"] = b"dummy"
 app.config["SESSION_PROTECTION"] = "strong"
+app.config["LOGIN_USER_FILE_PATH"] = "userfile.txt"
 
 toolbar = DebugToolbarExtension(app)
 

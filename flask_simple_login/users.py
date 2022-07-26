@@ -44,7 +44,8 @@ class User(UserMixin):
     @staticmethod
     def load_password_hash(username):
         passwordHash = None
-        with open("userfile.txt") as userfile:
+        fn = flask.current_app.config["LOGIN_USER_FILE_PATH"]
+        with open(fn) as userfile:
             for line in userfile:
                 line = line.strip("\n")
                 line_split = line.split(" ")
