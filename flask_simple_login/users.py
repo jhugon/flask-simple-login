@@ -7,6 +7,9 @@ from urllib.parse import urlparse, urljoin
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import string
+import logging
+
+LOGGER = logging.getLogger(__name__)
 
 
 def do_login(template_name, redirect_to_on_success):
@@ -16,15 +19,14 @@ def do_login(template_name, redirect_to_on_success):
         # user should be an instance of your `User` class
         username = form.username.data
         password = form.password.data
-        print(f"User tried to login with: {username}, {password}")
         if not User.authenticate_user_password(username, password):
-            print("Login failed")
+            LOGGER.info(f"Login failed for username: '{username}'")
             flask.flash("Incorrect username and/or password.")
             return flask.redirect(flask.url_for("auth.login"))
         user = User(username)
         login_user(user)
 
-        print("Login success")
+        LOGGER.info(f"Login success for username: '{username}'")
         flask.flash("Logged in successfully.")
 
         return flask.redirect(redirect_to_on_success)
@@ -49,7 +51,6 @@ class User(UserMixin):
             for line in userfile:
                 line = line.strip("\n")
                 line_split = line.split(" ")
-                print(line_split)
                 if len(line_split) != 2:
                     continue
                 if line_split[0] == username:
