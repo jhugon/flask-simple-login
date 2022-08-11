@@ -24,7 +24,13 @@ def do_login(template_name, redirect_to_on_success):
             flask.flash("Incorrect username and/or password.")
             return flask.redirect(flask.url_for("auth.login"))
         user = User(username)
-        login_user(user)
+        ## This is more of a persist login sessions setting
+        remember = False
+        try:
+            remember = flask.current_app.config["LOGIN_REMEMBER"]
+        except KeyError:
+            pass
+        login_user(user, remember=remember)
 
         LOGGER.info(f"Login success for username: '{username}'")
         flask.flash("Logged in successfully.")
