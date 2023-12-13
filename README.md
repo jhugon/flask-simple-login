@@ -38,7 +38,7 @@ from flask_simple_login import (
 )
 ```
 
-and this once you have done `app = Falsk(__name__)`:
+and this once you have done `app = Flask(__name__)`:
 
 ```python
 app.register_blueprint(auth)
@@ -50,6 +50,7 @@ Make sure to set a secure secret key like:
 ```python
 app.config["SECRET_KEY"] = b"<secure key>"
 app.config["SESSION_PROTECTION"] = "strong"
+app.config["LOGIN_USER_FILE_PATH"] = "userfile.txt"
 ```
 
 Generate a key with :
