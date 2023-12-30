@@ -39,7 +39,29 @@ Generate a key with :
 python -c 'import secrets; print(secrets.token_hex())'
 ```
 
-### Setting up user file
+## User Info Storage
+
+You must either configure users to be loaded from a text file or a SQLAlchemy database
+
+For the userfile:
+
+```python
+app.config["LOGIN_USER_FILE_PATH"] = "userfile.txt"
+```
+
+For the database, set the table with the login info:
+
+```python
+app.config["LOGIN_USER_TABLE"] = "users"
+```
+
+and the database URI must also be set:
+
+```python
+app.config["SQLALCHEMY_DATABASE_URI"] = "..."
+```
+
+## Managing users
 
 After activating the package as part of your flask app, you can add users with:
 
