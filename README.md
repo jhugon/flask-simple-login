@@ -2,27 +2,6 @@
 
 This module can be used as a [Flask Blueprint](https://flask.palletsprojects.com/en/2.1.x/blueprints/)
 
-## Setting up user file
-
-After installing the package, run:
-
-```bash
-flask-simple-login-gen-user-file-line >> userfile.txt
-```
-
-You will be asked for a username, the password, and to confirm the password.
-You can check that your new user was added to the user file by inspecting its
-contents.
-
-The user file line is of the form: `<username> <password hash>` No spaces or
-control characters are allowed in the username or password hash
-
-## Running the test server
-
-```bash
-./run_debug_server.sh
-```
-
 ## Adding to your application
 
 Install this package into your path.
@@ -35,10 +14,11 @@ from flask_simple_login import (
     auth,
     User,
     login_required,
+    current_user,
 )
 ```
 
-and this once you have done `app = Flask(__name__)`:
+and add this once you have done `app = Flask(__name__)`:
 
 ```python
 app.register_blueprint(auth)
@@ -57,4 +37,27 @@ Generate a key with :
 
 ```bash
 python -c 'import secrets; print(secrets.token_hex())'
+```
+
+### Setting up user file
+
+After activating the package as part of your flask app, you can add users with:
+
+```bash
+flask auth adduser
+```
+
+(You may need to set the env var `FLASK_APP` to your flask app)
+
+The userfile will be printed, and you will be asked for a username, the
+password, and to confirm the password.  You can check that your new user was
+added to the user file by inspecting its contents.
+
+The user file line is of the form: `<username> <password hash>` No spaces or
+control characters are allowed in the username or password hash
+
+## Running the test server in this package
+
+```bash
+./run_debug_server.sh
 ```
