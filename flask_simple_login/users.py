@@ -19,7 +19,7 @@ def do_login(template_name, redirect_to_on_success):
         # user should be an instance of your `User` class
         username = form.username.data
         password = form.password.data
-        if not User.authenticate_user_password(username, password):
+        if not authenticate_user_password(username, password):
             LOGGER.info(f"Login failed for username: '{username}'")
             flask.flash("Incorrect username and/or password.")
             return flask.redirect(flask.url_for("auth.login"))
@@ -48,9 +48,7 @@ def do_logout(template_name, redirect_to_on_success):
     return flask.render_template(template_name, form=form)
 
 
-class User(UserMixin):
-    @staticmethod
-    def load_password_hash(username):
+def load_password_hash(username):
         passwordHash = None
         fn = flask.current_app.config["LOGIN_USER_FILE_PATH"]
         with open(fn) as userfile:
@@ -64,14 +62,17 @@ class User(UserMixin):
                     break
         return passwordHash
 
-    def authenticate_user_password(username, password):
-        passwordHash = User.load_password_hash(username)
+
+def authenticate_user_password(username, password):
+        passwordHash = load_password_hash(username)
         if not (passwordHash is None):
             if check_password_hash(passwordHash, password):
                 return True
         else:
             return False
 
+
+class User(UserMixin):
     def __init__(self, username):
         self.username = username
 
