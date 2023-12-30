@@ -32,6 +32,6 @@ def logout():
 
 ##### Flask CLI Commands
 
-@auth.cli.command("adduser",help="Adds user to the current apps user storage. Will ask for password")
+@auth.cli.command("adduser",help="Adds user to the current app's user storage. Will ask for password")
 def adduser():
     append_user_file_line()
