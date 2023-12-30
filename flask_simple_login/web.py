@@ -2,6 +2,7 @@ import flask
 from flask import Blueprint
 
 from .users import User, do_login, do_logout, is_safe_url, login_required, LoginManager
+from .users import append_user_file_line
 
 auth = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -27,3 +28,10 @@ def login():
 def logout():
     redirect_to = flask.url_for("index")
     return do_logout("logout.html", redirect_to)
+
+
+##### Flask CLI Commands
+
+@auth.cli.command("adduser",help="Adds user to the current apps user storage. Will ask for password")
+def adduser():
+    append_user_file_line()

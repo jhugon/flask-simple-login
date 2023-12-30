@@ -129,19 +129,10 @@ def make_user_file_line(username, password):
     return result
 
 
-def print_user_file_line_command():
-    import argparse
+def append_user_file_line():
     import getpass
-    import sys
 
-    tempOut = sys.stdout
-    sys.stdout = sys.stderr
-
-    parser = argparse.ArgumentParser(
-        description="Asks for a username and password (entered 2 times to check for consistency) and generates a line suitable for the user file"
-    )
-    args = parser.parse_args()
-
+    fn = flask.current_app.config["LOGIN_USER_FILE_PATH"]
     username = input("Enter username: ")
     password1 = getpass.getpass("Enter password: ")
     password2 = getpass.getpass("Re-enter password: ")
@@ -149,5 +140,5 @@ def print_user_file_line_command():
         print("Passwords don't match!")
         return
     line = make_user_file_line(username, password1)
-    sys.stdout = tempOut
-    print(line)
+    with open(fn,"a") as userfile:
+        userfile.write(line+"\n")
