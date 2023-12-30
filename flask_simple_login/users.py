@@ -134,16 +134,20 @@ def append_user_file_line():
     import sys
 
     fn = flask.current_app.config["LOGIN_USER_FILE_PATH"]
+    print(f"Adding to userfile: '{fn}'")
     username = input("Enter username: ")
-    with open(fn,'r') as userfile:
-        for line in userfile:
-            line = line.strip("\n")
-            line_split = line.split(" ")
-            if len(line_split) != 2:
-                continue
-            if line_split[0] == username:
-                print("Error: username already present. Exiting.",file=sys.stderr)
-                sys.exit(1)
+    try:
+        with open(fn,'r') as userfile:
+            for line in userfile:
+                line = line.strip("\n")
+                line_split = line.split(" ")
+                if len(line_split) != 2:
+                    continue
+                if line_split[0] == username:
+                    print("Error: username already present. Exiting.",file=sys.stderr)
+                    sys.exit(1)
+    except FileNotFoundError:
+        pass
     password1 = getpass.getpass("Enter password: ")
     password2 = getpass.getpass("Re-enter password: ")
     if password1 != password2:
