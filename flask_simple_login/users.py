@@ -93,10 +93,8 @@ def is_safe_url(target):
     test_url = urlparse(urljoin(flask.request.host_url, target))
     return test_url.scheme in ("http", "https") and ref_url.netloc == test_url.netloc
 
-
-def gen_random_bytes():
-    return os.urandom(24)
-
+#####################
+## Admin Functions ##
 
 def make_user_file_line(username, password):
     """
