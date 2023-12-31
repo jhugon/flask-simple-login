@@ -81,7 +81,8 @@ def load_password_hash(username):
                     passwordHash = line_split[1]
                     break
     else:
-        pass
+        dbuser = db.session.execute(db.select(DBUser).filter_by(username=username)).scalar_one()
+        passwordhash = dbuser.passwordhash
     return passwordHash
 
 
