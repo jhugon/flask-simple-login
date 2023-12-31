@@ -9,6 +9,8 @@ import os
 import string
 import logging
 
+from .db import db, DBUser
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -66,7 +68,8 @@ def do_logout(template_name, redirect_to_on_success):
 
 
 def load_password_hash(username):
-        passwordHash = None
+    passwordHash = None
+    if isuserfileconfig:
         fn = flask.current_app.config["LOGIN_USER_FILE_PATH"]
         with open(fn) as userfile:
             for line in userfile:
@@ -77,7 +80,9 @@ def load_password_hash(username):
                 if line_split[0] == username:
                     passwordHash = line_split[1]
                     break
-        return passwordHash
+    else:
+        pass
+    return passwordHash
 
 
 def authenticate_user_password(username, password):
