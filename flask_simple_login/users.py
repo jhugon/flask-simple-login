@@ -12,6 +12,23 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 
+class User(UserMixin):
+    def __init__(self, username):
+        self.username = username
+
+    def get_id(self):
+        return self.username
+
+
+class LoginForm(FlaskForm):
+    username = StringField("username", validators=[DataRequired()])
+    password = PasswordField("password", validators=[DataRequired()])
+
+
+class LogoutForm(FlaskForm):
+    pass
+
+
 def do_login(template_name, redirect_to_on_success):
     form = LoginForm()
     if form.validate_on_submit():
@@ -70,24 +87,7 @@ def authenticate_user_password(username, password):
                 return True
         else:
             return False
-
-
-class User(UserMixin):
-    def __init__(self, username):
-        self.username = username
-
-    def get_id(self):
-        return self.username
-
-
-class LoginForm(FlaskForm):
-    username = StringField("username", validators=[DataRequired()])
-    password = PasswordField("password", validators=[DataRequired()])
-
-
-class LogoutForm(FlaskForm):
-    pass
-
+            
 
 def is_safe_url(target):
     ref_url = urlparse(flask.request.host_url)
