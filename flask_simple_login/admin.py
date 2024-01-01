@@ -1,13 +1,30 @@
 import string
+import getpass
+import sys
 
 import flask
 from werkzeug.security import generate_password_hash
 
+from .db import db, DBUser
+
+def initdb(app):
+    with app.app_context():
+        db.create_all()
+    print("User database table created!")
+
+def adduserdb(app, username):
+    with app.app_context():
+        password1 = getpass.getpass("Enter password: ")
+        password2 = getpass.getpass("Re-enter password: ")
+        if password1 != password2:
+            print("Error: passwords don't match! Exiting.",file=sys.stderr)
+            sys.exit(1)
+        dbuser = DBUser(username,password1)
+        db.session.add(dbuser)
+        db.session.commit()
+    print("User added successfully.")
 
 def append_user_file_line():
-    import getpass
-    import sys
-
     fn = flask.current_app.config["LOGIN_USER_FILE_PATH"]
     print(f"Adding to userfile: '{fn}'")
     username = input("Enter username: ")
