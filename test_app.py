@@ -14,7 +14,10 @@ app = Flask(__name__)
 app.debug = True
 app.config["SECRET_KEY"] = b"dummy"
 app.config["SESSION_PROTECTION"] = "strong"
+
+app.config["LOGIN_USER_INFO_STORE_TYPE"] = "textfile"
 app.config["LOGIN_USER_FILE_PATH"] = "userfile.txt"
+#app.config["LOGIN_USER_INFO_STORE_TYPE"] = "sqlalchemy"
 
 setup_auth(app)
 

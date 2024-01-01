@@ -88,9 +88,9 @@ def authenticate_user_password(username, password):
 
 def load_password_hash(username):
     passwordHash = None
-    userinfotype, userinfoloc = get_user_info_store()
+    userinfotype = get_user_info_store()
     match userinfotype:
-        case USERTEXT:
+        case UserInfoEnum.USERTEXT:
             fn = flask.current_app.config["LOGIN_USER_FILE_PATH"]
             with open(fn) as userfile:
                 for line in userfile:
@@ -101,7 +101,7 @@ def load_password_hash(username):
                     if line_split[0] == username:
                         passwordHash = line_split[1]
                         break
-        case USERDBTABLE:
+        case UserInfoEnum.USERDBTABLE:
             dbuser = db.session.execute(db.select(DBUser).filter_by(username=username)).scalar_one()
             passwordhash = dbuser.passwordhash
         case _:
@@ -122,8 +122,8 @@ def get_user_info_store() -> UserInfoEnum:
     userinfostorestr = flask.current_app.config["LOGIN_USER_INFO_STORE_TYPE"]
     match userinfostorestr:
         case "textfile":
-            return USERTEXT
+            return UserInfoEnum.USERTEXT
         case "sqlalchemy":
-            return USERDBTABLE
+            return UserInfoEnum.USERDBTABLE
         case _:
             raise Exception(f"Unexpected value for LOGIN_USER_INFO_STORE_TYPE flask config: '{userinfostorestr}'")
