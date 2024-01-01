@@ -40,21 +40,21 @@ python -c 'import secrets; print(secrets.token_hex())'
 
 ## User Info Storage
 
-You must either configure users to be loaded from a text file or a SQLAlchemy database
+You must either configure users to be loaded from a text file or a SQLAlchemy database by setting:
 
-For the userfile:
+```python
+app.config["LOGIN_USER_INFO_STORE_TYPE"] = "textfile"
+# or
+app.config["LOGIN_USER_INFO_STORE_TYPE"] = "sqlalchemy"
+```
+
+For the text file, you must also set:
 
 ```python
 app.config["LOGIN_USER_FILE_PATH"] = "userfile.txt"
 ```
 
-For the database, set the table with the login info:
-
-```python
-app.config["LOGIN_USER_TABLE"] = "users"
-```
-
-and the database URI must also be set:
+For SQLAlchemy, you must also set the database URI.
 
 ```python
 app.config["SQLALCHEMY_DATABASE_URI"] = "..."

@@ -11,6 +11,7 @@ from wtforms import StringField, PasswordField
 from wtforms.validators import DataRequired
 
 from .db import db, DBUser
+from enum import Enum
 
 LOGGER = logging.getLogger(__name__)
 
@@ -30,6 +31,14 @@ class LoginForm(FlaskForm):
 
 class LogoutForm(FlaskForm):
     pass
+
+
+class UserInfoEnum(Enum):
+    """
+    What type of user info store is being used
+    """
+    USERTEXT = 1
+    USERDBTABLE = 2
 
 
 def do_login(template_name, redirect_to_on_success):
@@ -79,20 +88,24 @@ def authenticate_user_password(username, password):
 
 def load_password_hash(username):
     passwordHash = None
-    if isuserfileconfig:
-        fn = flask.current_app.config["LOGIN_USER_FILE_PATH"]
-        with open(fn) as userfile:
-            for line in userfile:
-                line = line.strip("\n")
-                line_split = line.split(" ")
-                if len(line_split) != 2:
-                    continue
-                if line_split[0] == username:
-                    passwordHash = line_split[1]
-                    break
-    else:
-        dbuser = db.session.execute(db.select(DBUser).filter_by(username=username)).scalar_one()
-        passwordhash = dbuser.passwordhash
+    userinfotype, userinfoloc = get_user_info_store()
+    match userinfotype:
+        case USERTEXT:
+            fn = flask.current_app.config["LOGIN_USER_FILE_PATH"]
+            with open(fn) as userfile:
+                for line in userfile:
+                    line = line.strip("\n")
+                    line_split = line.split(" ")
+                    if len(line_split) != 2:
+                        continue
+                    if line_split[0] == username:
+                        passwordHash = line_split[1]
+                        break
+        case USERDBTABLE:
+            dbuser = db.session.execute(db.select(DBUser).filter_by(username=username)).scalar_one()
+            passwordhash = dbuser.passwordhash
+        case _:
+            raise Exception(f"Unexpected userinfotype: {userinfotype}")
     return passwordHash
 
 
@@ -100,3 +113,17 @@ def is_safe_url(target):
     ref_url = urlparse(flask.request.host_url)
     test_url = urlparse(urljoin(flask.request.host_url, target))
     return test_url.scheme in ("http", "https") and ref_url.netloc == test_url.netloc
+
+
+def get_user_info_store() -> UserInfoEnum:
+    """
+    Uses the flask configuration to figure out what type of user info store is being used
+    """
+    userinfostorestr = flask.current_app.config["LOGIN_USER_INFO_STORE_TYPE"]
+    match userinfostorestr:
+        case "textfile":
+            return USERTEXT
+        case "sqlalchemy":
+            return USERDBTABLE
+        case _:
+            raise Exception(f"Unexpected value for LOGIN_USER_INFO_STORE_TYPE flask config: '{userinfostorestr}'")
