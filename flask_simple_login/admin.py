@@ -50,7 +50,10 @@ def adduserdb(app, username):
         if password1 != password2:
             print("Error: passwords don't match! Exiting.",file=sys.stderr)
             sys.exit(1)
-        dbuser = DBUser(username,password1)
+        passwordHash = generate_password_hash(
+            password1, "pbkdf2:sha256:100000", salt_length=16
+        )
+        dbuser = DBUser(username,passwordHash)
         db.session.add(dbuser)
         db.session.commit()
 
