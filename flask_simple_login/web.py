@@ -1,8 +1,10 @@
 import flask
 from flask import Blueprint
 
+from .admin import append_user_file_line
+from .db import db
 from .users import User, do_login, do_logout, is_safe_url, login_required, LoginManager
-from .admin import add_admin_commands
+from .users import UserInfoEnum, get_user_info_store
 
 auth = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -13,6 +15,11 @@ def setup_auth(app):
     "Set configuration keys then run this to setup this blueprint"
     app.register_blueprint(auth)
     login_manager.init_app(app)
+    match get_user_info_store(app.config["LOGIN_USER_INFO_STORE_TYPE"]):
+        case UserInfoEnum.USERDBTABLE:
+            db.init_app(app)
+        case _:
+            pass
 
 
 @login_manager.user_loader

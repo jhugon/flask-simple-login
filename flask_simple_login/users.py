@@ -115,11 +115,12 @@ def is_safe_url(target):
     return test_url.scheme in ("http", "https") and ref_url.netloc == test_url.netloc
 
 
-def get_user_info_store() -> UserInfoEnum:
+def get_user_info_store(userinfostorestr = None) -> UserInfoEnum:
     """
     Uses the flask configuration to figure out what type of user info store is being used
     """
-    userinfostorestr = flask.current_app.config["LOGIN_USER_INFO_STORE_TYPE"]
+    if userinfostorestr is None:
+        userinfostorestr = flask.current_app.config["LOGIN_USER_INFO_STORE_TYPE"]
     match userinfostorestr:
         case "textfile":
             return UserInfoEnum.USERTEXT
