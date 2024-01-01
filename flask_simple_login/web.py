@@ -2,7 +2,7 @@ import flask
 from flask import Blueprint
 
 from .users import User, do_login, do_logout, is_safe_url, login_required, LoginManager
-from .admin import append_user_file_line
+from .admin import add_admin_commands
 
 auth = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -10,7 +10,7 @@ login_manager = LoginManager()
 login_manager.login_view = "auth.login"
 
 def setup_auth(app):
-    "Set configuration keys then run this to setup"
+    "Set configuration keys then run this to setup this blueprint"
     app.register_blueprint(auth)
     login_manager.init_app(app)
 
@@ -37,6 +37,4 @@ def logout():
 
 ##### Flask CLI Commands
 
-@auth.cli.command("adduser",help="Adds user to the current app's user storage. Will ask for password")
-def adduser():
-    append_user_file_line()
+add_admin_commands(auth)
