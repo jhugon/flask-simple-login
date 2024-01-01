@@ -7,6 +7,13 @@ from werkzeug.security import generate_password_hash
 
 from .db import db, DBUser
 
+def add_admin_commands(auth):
+    "add admin commands to blueprint 'auth'"
+
+    @auth.cli.command("adduser",help="Adds user to the current app's user storage. Will ask for password")
+    def adduser():
+        append_user_file_line()
+
 def initdb(app):
     with app.app_context():
         db.create_all()
