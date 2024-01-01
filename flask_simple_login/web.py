@@ -8,7 +8,12 @@ auth = Blueprint("auth", __name__, url_prefix="/auth")
 
 login_manager = LoginManager()
 login_manager.login_view = "auth.login"
-login_manager.session_protection = "strong"
+
+def setup_auth(app):
+    "Set configuration keys then run this to setup"
+    app.register_blueprint(auth)
+    login_manager.init_app(app)
+
 
 @login_manager.user_loader
 def load_user(user_id):
