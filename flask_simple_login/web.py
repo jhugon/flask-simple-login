@@ -2,7 +2,7 @@ import flask
 from flask import Blueprint
 
 from .users import User, do_login, do_logout, is_safe_url, login_required, LoginManager
-from .users import append_user_file_line
+from .admin import append_user_file_line
 
 auth = Blueprint("auth", __name__, url_prefix="/auth")
 
