@@ -2,22 +2,46 @@ import string
 import getpass
 import sys
 
+import click
 import flask
 from werkzeug.security import generate_password_hash
 
 from .db import db, DBUser
+from .users import UserInfoEnum, get_user_info_store
 
 def add_admin_commands(auth):
     "add admin commands to blueprint 'auth'"
 
+    @auth.cli.command("initdb",help="initialize database login user table")
+    def initdb():
+        app = flask.current_app
+        with app.app_context():
+            db.create_all()
+        with app.app_context():
+            match get_user_info_store():
+                case UserInfoEnum.USERTEXT:
+                    print("Error: No database to init in text file mode. Check the LOGIN_USER_INFO_STORE_TYPE flask config var.",file=sys.stderr)
+                    sys.exit(1)
+                case UserInfoEnum.USERDBTABLE:
+                    db.create_all()
+                case _:
+                    raise Exception("Unexpected UserInfoEnum")
+        print("User database table created!")
+    
     @auth.cli.command("adduser",help="Adds user to the current app's user storage. Will ask for password")
-    def adduser():
-        append_user_file_line()
+    @click.argument("username")
+    def adduser(username):
+        app = flask.current_app
+        with app.app_context():
+            match get_user_info_store():
+                case UserInfoEnum.USERTEXT:
+                    append_user_file_line(app,username)
+                case UserInfoEnum.USERDBTABLE:
+                    adduserdb(app,username)
+                case _:
+                    raise Exception("Unexpected UserInfoEnum")
+        print ("Successfully added new user")
 
-def initdb(app):
-    with app.app_context():
-        db.create_all()
-    print("User database table created!")
 
 def adduserdb(app, username):
     with app.app_context():
@@ -29,12 +53,10 @@ def adduserdb(app, username):
         dbuser = DBUser(username,password1)
         db.session.add(dbuser)
         db.session.commit()
-    print("User added successfully.")
 
-def append_user_file_line():
-    fn = flask.current_app.config["LOGIN_USER_FILE_PATH"]
+def append_user_file_line(app,username):
+    fn = app.config["LOGIN_USER_FILE_PATH"]
     print(f"Adding to userfile: '{fn}'")
-    username = input("Enter username: ")
     try:
         with open(fn,'r') as userfile:
             for line in userfile:
