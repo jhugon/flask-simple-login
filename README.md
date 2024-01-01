@@ -10,19 +10,16 @@ Import this in your main flask app file:
 
 ```python
 from flask_simple_login import (
-    login_manager,
-    auth,
-    User,
+    setup_auth,
     login_required,
     current_user,
 )
 ```
 
-and add this once you have done `app = Flask(__name__)`:
+and add this once you have done `app = Flask(__name__)` and have set configuration options (below):
 
 ```python
-app.register_blueprint(auth)
-login_manager.init_app(app)
+setup_auth(app)
 ```
 
 Make sure to set a secure secret key like:
