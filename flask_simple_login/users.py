@@ -14,7 +14,9 @@ from .db import db, DBUser, NoResultFound
 from enum import Enum
 
 LOGGER = logging.getLogger(__name__)
-
+#from flask.logging import default_handler
+#LOGGER.addHandler(default_handler)
+#LOGGER.setLevel(logging.DEBUG)
 
 class User(UserMixin):
     def __init__(self, username):
@@ -106,7 +108,8 @@ def load_password_hash(username):
                 dbuser = db.session.execute(db.select(DBUser).filter_by(username=username)).scalar_one()
             except NoResultFound:
                 return
-            passwordhash = dbuser.passwordhash
+            else:
+                passwordHash = dbuser.passwordhash
         case _:
             raise Exception(f"Unexpected userinfotype: {userinfotype}")
     return passwordHash
