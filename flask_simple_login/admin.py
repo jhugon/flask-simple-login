@@ -45,14 +45,7 @@ def add_admin_commands(auth):
 
 def adduserdb(app, username):
     with app.app_context():
-        password1 = getpass.getpass("Enter password: ")
-        password2 = getpass.getpass("Re-enter password: ")
-        if password1 != password2:
-            print("Error: passwords don't match! Exiting.",file=sys.stderr)
-            sys.exit(1)
-        passwordHash = generate_password_hash(
-            password1, "pbkdf2:sha256:100000", salt_length=16
-        )
+        passwordHash = validateusernamehashpassword(username)
         dbuser = DBUser(username,passwordHash)
         db.session.add(dbuser)
         db.session.commit()
@@ -72,12 +65,7 @@ def append_user_file_line(app,username):
                     sys.exit(1)
     except FileNotFoundError:
         pass
-    password1 = getpass.getpass("Enter password: ")
-    password2 = getpass.getpass("Re-enter password: ")
-    if password1 != password2:
-        print("Error: passwords don't match! Exiting.",file=sys.stderr)
-        sys.exit(1)
-    line = make_user_file_line(username, password1)
+    line = make_user_file_line(username)
     with open(fn,"a") as userfile:
         userfile.write(line+"\n")
 
@@ -89,10 +77,22 @@ def make_user_file_line(username, password):
 
     The user file only lists these lines
     """
+    result = username + " "
+    passwordHash = validateusernamehashpassword(username)
+    result += passwordHash
+    return result
+
+
+def validateusernamehashpassword(username):
     if len(username) < 3 or len(username) > 30:
         raise Exception(
             f'Error: username "{username}" should be between 3 and 30 characters long.'
         )
+    password = getpass.getpass("Enter password: ")
+    password2 = getpass.getpass("Re-enter password: ")
+    if password != password2:
+        print("Error: passwords don't match! Exiting.",file=sys.stderr)
+        sys.exit(1)
     if len(password) < 3 or len(password) > 30:
         raise Exception(f"Error: password should be between 8 and 30 characters long.")
     for x in username:
@@ -100,14 +100,12 @@ def make_user_file_line(username, password):
             raise Exception(
                 f'Error: username "{username}" contains a space or non-printable characters. This is not allowed.'
             )
-    result = username + " "
     passwordHash = generate_password_hash(
         password, "pbkdf2:sha256:100000", salt_length=16
     )
     for x in passwordHash:
         if x in string.whitespace or not (x in string.printable):
             raise Exception(
-                f'Error: passwordHash "{username}" contains a space or non-printable characters. This is not allowed.'
+                f'Error: passwordHash "{username}" contains a space or non-printable characters. This is not allowed. Try again, a different salt may help.y'
             )
-    result += passwordHash
-    return result
+    return passwordHash
