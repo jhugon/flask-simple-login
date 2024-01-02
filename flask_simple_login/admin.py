@@ -88,6 +88,11 @@ def validateusernamehashpassword(username):
         raise Exception(
             f'Error: username "{username}" should be between 3 and 30 characters long.'
         )
+    for x in username:
+        if x in string.whitespace or not (x in string.printable):
+            raise Exception(
+                f'Error: username "{username}" contains a space or non-printable characters. This is not allowed.'
+            )
     password = getpass.getpass("Enter password: ")
     password2 = getpass.getpass("Re-enter password: ")
     if password != password2:
@@ -95,11 +100,6 @@ def validateusernamehashpassword(username):
         sys.exit(1)
     if len(password) < 3 or len(password) > 30:
         raise Exception(f"Error: password should be between 8 and 30 characters long.")
-    for x in username:
-        if x in string.whitespace or not (x in string.printable):
-            raise Exception(
-                f'Error: username "{username}" contains a space or non-printable characters. This is not allowed.'
-            )
     passwordHash = generate_password_hash(
         password, "pbkdf2:sha256:100000", salt_length=16
     )
