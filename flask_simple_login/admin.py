@@ -58,6 +58,22 @@ def add_admin_commands(auth):
                     raise Exception("Unexpected UserInfoEnum")
         print ("Successfully deleted user")
 
+    @auth.cli.command("changeuserpassword",help="Change a user's password.")
+    @click.argument("username")
+    def changeuserpassword(username):
+        app = flask.current_app
+        with app.app_context():
+            match get_user_info_store():
+                case UserInfoEnum.USERTEXT:
+                    NotImplementedError("Not implemented for text file user info storage")
+                case UserInfoEnum.USERDBTABLE:
+                    dbuser = db.session.execute(db.select(DBUser).filter_by(username=username)).scalar_one()
+                    dbuser.passwordhash = validateusernamehashpassword(username)
+                    db.session.commit()
+                case _:
+                    raise Exception("Unexpected UserInfoEnum")
+        print ("Successfully updated password")
+
 
 def adduserdb(app, username):
     with app.app_context():
