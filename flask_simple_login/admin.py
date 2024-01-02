@@ -16,8 +16,6 @@ def add_admin_commands(auth):
     def initdb():
         app = flask.current_app
         with app.app_context():
-            db.create_all()
-        with app.app_context():
             match get_user_info_store():
                 case UserInfoEnum.USERTEXT:
                     print("Error: No database to init in text file mode. Check the LOGIN_USER_INFO_STORE_TYPE flask config var.",file=sys.stderr)
@@ -49,7 +47,7 @@ def add_admin_commands(auth):
         with app.app_context():
             match get_user_info_store():
                 case UserInfoEnum.USERTEXT:
-                    NotImplementedError("Not implemented for text file user info storage")
+                    raise NotImplementedError("Not implemented for text file user info storage")
                 case UserInfoEnum.USERDBTABLE:
                     try:
                         dbuser = db.session.execute(db.select(DBUser).filter_by(username=username)).scalar_one()
@@ -70,7 +68,7 @@ def add_admin_commands(auth):
         with app.app_context():
             match get_user_info_store():
                 case UserInfoEnum.USERTEXT:
-                    NotImplementedError("Not implemented for text file user info storage")
+                    raise NotImplementedError("Not implemented for text file user info storage")
                 case UserInfoEnum.USERDBTABLE:
                     try:
                         dbuser = db.session.execute(db.select(DBUser).filter_by(username=username)).scalar_one()
@@ -78,6 +76,7 @@ def add_admin_commands(auth):
                         print("Error: username not found. Exiting.",file=sys.stderr)
                         sys.exit(1)
                     else:
+                        print("NEW PASSWORD:")
                         dbuser.passwordhash = validateusernamehashpassword(username)
                         db.session.commit()
                 case _:
@@ -112,7 +111,7 @@ def append_user_file_line(app,username):
         userfile.write(line+"\n")
 
 
-def make_user_file_line(username, password):
+def make_user_file_line(username):
     """
     The user file line is of the form: "<username> <password hash>"
     No spaces or control characters are allowed in the username or password hash
