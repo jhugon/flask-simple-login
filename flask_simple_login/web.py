@@ -1,7 +1,7 @@
 import flask
 from flask import Blueprint
 
-from .admin import append_user_file_line
+from .admin import add_admin_commands
 from .db import db
 from .users import User, do_login, do_logout, is_safe_url, login_required, LoginManager
 from .users import UserInfoEnum, get_user_info_store

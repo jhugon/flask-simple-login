@@ -51,9 +51,14 @@ def add_admin_commands(auth):
                 case UserInfoEnum.USERTEXT:
                     NotImplementedError("Not implemented for text file user info storage")
                 case UserInfoEnum.USERDBTABLE:
-                    dbuser = db.session.execute(db.select(DBUser).filter_by(username=username)).scalar_one()
-                    db.session.delete(dbuser)
-                    db.session.commit()
+                    try:
+                        dbuser = db.session.execute(db.select(DBUser).filter_by(username=username)).scalar_one()
+                    except NoResultFound:
+                        print("Error: username not found. Exiting.",file=sys.stderr)
+                        sys.exit(1)
+                    else:
+                        db.session.delete(dbuser)
+                        db.session.commit()
                 case _:
                     raise Exception("Unexpected UserInfoEnum")
         print ("Successfully deleted user")
@@ -67,9 +72,14 @@ def add_admin_commands(auth):
                 case UserInfoEnum.USERTEXT:
                     NotImplementedError("Not implemented for text file user info storage")
                 case UserInfoEnum.USERDBTABLE:
-                    dbuser = db.session.execute(db.select(DBUser).filter_by(username=username)).scalar_one()
-                    dbuser.passwordhash = validateusernamehashpassword(username)
-                    db.session.commit()
+                    try:
+                        dbuser = db.session.execute(db.select(DBUser).filter_by(username=username)).scalar_one()
+                    except NoResultFound:
+                        print("Error: username not found. Exiting.",file=sys.stderr)
+                        sys.exit(1)
+                    else:
+                        dbuser.passwordhash = validateusernamehashpassword(username)
+                        db.session.commit()
                 case _:
                     raise Exception("Unexpected UserInfoEnum")
         print ("Successfully updated password")
@@ -77,8 +87,8 @@ def add_admin_commands(auth):
 
 def adduserdb(app, username):
     with app.app_context():
-        passwordHash = validateusernamehashpassword(username)
-        dbuser = DBUser(username,passwordHash)
+        passwordhash = validateusernamehashpassword(username)
+        dbuser = DBUser(username=username,passwordhash=passwordhash)
         db.session.add(dbuser)
         db.session.commit()
 

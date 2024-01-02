@@ -57,6 +57,12 @@ For SQLAlchemy, you must also set the database URI.
 app.config["SQLALCHEMY_DATABASE_URI"] = "..."
 ```
 
+and, after the code is setup, you must initialize the DB with:
+
+```bash
+flask auth initdb
+```
+
 ## Managing users
 
 After activating the package as part of your flask app, you can add users with:
@@ -73,6 +79,9 @@ added to the user file by inspecting its contents.
 
 The user file line is of the form: `<username> <password hash>` No spaces or
 control characters are allowed in the username or password hash
+
+For the DB, `flask auth deleteuser` and `flask auth changeuserpassword`
+commands are also provided.
 
 ## Running the test server in this package
 

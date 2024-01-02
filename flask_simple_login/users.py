@@ -10,7 +10,7 @@ from werkzeug.security import check_password_hash
 from wtforms import StringField, PasswordField
 from wtforms.validators import DataRequired
 
-from .db import db, DBUser
+from .db import db, DBUser, NoResultFound
 from enum import Enum
 
 LOGGER = logging.getLogger(__name__)
@@ -102,7 +102,10 @@ def load_password_hash(username):
                         passwordHash = line_split[1]
                         break
         case UserInfoEnum.USERDBTABLE:
-            dbuser = db.session.execute(db.select(DBUser).filter_by(username=username)).scalar_one()
+            try:
+                dbuser = db.session.execute(db.select(DBUser).filter_by(username=username)).scalar_one()
+            except NoResultFound:
+                return
             passwordhash = dbuser.passwordhash
         case _:
             raise Exception(f"Unexpected userinfotype: {userinfotype}")
