@@ -19,7 +19,7 @@ from flask_simple_login import (
 and add this once you have done `app = Flask(__name__)` and have set configuration options (below):
 
 ```python
-setup_auth(app)
+setup_auth(app, db)
 ```
 
 Make sure to set a secure secret key like:
@@ -49,12 +49,22 @@ For the text file, you must also set:
 
 ```python
 app.config["LOGIN_USER_FILE_PATH"] = "userfile.txt"
+db = None
 ```
 
 For SQLAlchemy, you must also set the database URI.
 
 ```python
 app.config["SQLALCHEMY_DATABASE_URI"] = "..."
+```
+
+and setup the database. If you are using Flask-SQLAlchemy elsewhere, just set
+it up first, and put it in as the "db" argument to `setup_auth(app,db)`.
+Otherwise, do the import `from flask_sqlalchemy import SQLAlchemy` and then:
+
+```python
+db = SQLAlchemy
+db.init_app(app)
 ```
 
 and, after the code is setup, you must initialize the DB with:

@@ -10,7 +10,7 @@ from werkzeug.security import check_password_hash
 from wtforms import StringField, PasswordField
 from wtforms.validators import DataRequired
 
-from .db import db, DBUser, NoResultFound
+from .db import NoResultFound
 from enum import Enum
 
 LOGGER = logging.getLogger(__name__)
@@ -42,15 +42,16 @@ class UserInfoEnum(Enum):
     USERTEXT = 1
     USERDBTABLE = 2
 
+###########################
 
-def do_login(template_name, redirect_to_on_success):
+def do_login(template_name, redirect_to_on_success, db, DBUser):
     form = LoginForm()
     if form.validate_on_submit():
         # Login and validate the user.
         # user should be an instance of your `User` class
         username = form.username.data
         password = form.password.data
-        if not authenticate_user_password(username, password):
+        if not authenticate_user_password(username, password, db, DBUser):
             LOGGER.info(f"Login failed for username: '{username}'")
             flask.flash("Incorrect username and/or password.")
             return flask.redirect(flask.url_for("auth.login"))
@@ -79,8 +80,8 @@ def do_logout(template_name, redirect_to_on_success):
     return flask.render_template(template_name, form=form)
 
 
-def authenticate_user_password(username, password):
-        passwordHash = load_password_hash(username)
+def authenticate_user_password(username, password, db, DBUser):
+        passwordHash = load_password_hash(username, db, DBUser)
         if not (passwordHash is None):
             if check_password_hash(passwordHash, password):
                 return True
@@ -88,7 +89,7 @@ def authenticate_user_password(username, password):
             return False
 
 
-def load_password_hash(username):
+def load_password_hash(username, db, DBUser):
     passwordHash = None
     userinfotype = get_user_info_store()
     match userinfotype:
@@ -114,6 +115,7 @@ def load_password_hash(username):
             raise Exception(f"Unexpected userinfotype: {userinfotype}")
     return passwordHash
 
+###########################
 
 def is_safe_url(target):
     ref_url = urlparse(flask.request.host_url)
