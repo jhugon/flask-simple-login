@@ -1,10 +1,8 @@
 import logging
-import os
-import string
 from urllib.parse import urlparse, urljoin
 
 import flask
-from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
+from flask_login import UserMixin, login_user, logout_user
 from flask_wtf import FlaskForm
 from werkzeug.security import check_password_hash
 from wtforms import StringField, PasswordField
@@ -82,7 +80,7 @@ def do_logout(template_name, redirect_to_on_success):
 
 def authenticate_user_password(username, password, db, DBUser):
         passwordHash = load_password_hash(username, db, DBUser)
-        if not (passwordHash is None):
+        if passwordHash is not None:
             if check_password_hash(passwordHash, password):
                 return True
         else:

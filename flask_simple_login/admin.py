@@ -5,6 +5,7 @@ import sys
 import click
 import flask
 from werkzeug.security import generate_password_hash
+from sqlalchemy.exc import NoResultFound
 
 from .users import UserInfoEnum, get_user_info_store
 
@@ -24,7 +25,7 @@ def add_admin_commands(auth,db,DBUser):
                 case _:
                     raise Exception("Unexpected UserInfoEnum")
         print("User database table created!")
-    
+
     @auth.cli.command("adduser",help="Adds user to the current app's user storage. Will ask for password")
     @click.argument("username")
     def adduser(username):
@@ -129,7 +130,7 @@ def add_admin_commands(auth,db,DBUser):
                 f'Error: username "{username}" should be between 3 and 30 characters long.'
             )
         for x in username:
-            if x in string.whitespace or not (x in string.printable):
+            if x in string.whitespace or x not in string.printable:
                 raise Exception(
                     f'Error: username "{username}" contains a space or non-printable characters. This is not allowed.'
                 )
@@ -139,12 +140,12 @@ def add_admin_commands(auth,db,DBUser):
             print("Error: passwords don't match! Exiting.",file=sys.stderr)
             sys.exit(1)
         if len(password) < 3 or len(password) > 30:
-            raise Exception(f"Error: password should be between 8 and 30 characters long.")
+            raise Exception("Error: password should be between 8 and 30 characters long.")
         passwordHash = generate_password_hash(
             password, "pbkdf2:sha256:100000", salt_length=16
         )
         for x in passwordHash:
-            if x in string.whitespace or not (x in string.printable):
+            if x in string.whitespace or x not in string.printable:
                 raise Exception(
                     f'Error: passwordHash "{username}" contains a space or non-printable characters. This is not allowed. Try again, a different salt may help.y'
                 )
