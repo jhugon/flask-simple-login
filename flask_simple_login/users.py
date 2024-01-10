@@ -1,15 +1,15 @@
 import logging
-from urllib.parse import urlparse, urljoin
+from enum import Enum
+from urllib.parse import urljoin, urlparse
 
 import flask
 from flask_login import UserMixin, login_user, logout_user
 from flask_wtf import FlaskForm
 from werkzeug.security import check_password_hash
-from wtforms import StringField, PasswordField
+from wtforms import PasswordField, StringField
 from wtforms.validators import DataRequired
 
 from .db import NoResultFound
-from enum import Enum
 
 LOGGER = logging.getLogger(__name__)
 # from flask.logging import default_handler
@@ -131,7 +131,8 @@ def is_safe_url(target):
 
 def get_user_info_store(userinfostorestr=None) -> UserInfoEnum:
     """
-    Uses the flask configuration to figure out what type of user info store is being used
+    Uses the flask configuration to figure out what type of
+    user info store is being used.
     """
     if userinfostorestr is None:
         userinfostorestr = flask.current_app.config["LOGIN_USER_INFO_STORE_TYPE"]
@@ -142,5 +143,8 @@ def get_user_info_store(userinfostorestr=None) -> UserInfoEnum:
             return UserInfoEnum.USERDBTABLE
         case _:
             raise Exception(
-                f"Unexpected value for LOGIN_USER_INFO_STORE_TYPE flask config: '{userinfostorestr}'"
+                (
+                    "Unexpected value for LOGIN_USER_INFO_STORE_TYPE flask config: "
+                    f"'{userinfostorestr}'"
+                )
             )

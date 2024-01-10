@@ -3,8 +3,16 @@ from flask import Blueprint
 
 from .admin import add_admin_commands
 from .db import makeDBTable
-from .users import User, do_login, do_logout, is_safe_url, login_required, LoginManager
-from .users import UserInfoEnum, get_user_info_store
+from .users import (
+    LoginManager,
+    User,
+    UserInfoEnum,
+    do_login,
+    do_logout,
+    get_user_info_store,
+    is_safe_url,
+    login_required,
+)
 
 
 def setup_auth(app, db=None):

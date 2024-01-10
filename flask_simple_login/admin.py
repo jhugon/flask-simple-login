@@ -1,11 +1,11 @@
-import string
 import getpass
+import string
 import sys
 
 import click
 import flask
-from werkzeug.security import generate_password_hash
 from sqlalchemy.exc import NoResultFound
+from werkzeug.security import generate_password_hash
 
 from .users import UserInfoEnum, get_user_info_store
 
@@ -19,8 +19,12 @@ def add_admin_commands(auth, db, DBUser):
         with app.app_context():
             match get_user_info_store():
                 case UserInfoEnum.USERTEXT:
+                    errormsg = (
+                        "Error: No database to init in text file mode."
+                        "Check the LOGIN_USER_INFO_STORE_TYPE flask config var."
+                    )
                     print(
-                        "Error: No database to init in text file mode. Check the LOGIN_USER_INFO_STORE_TYPE flask config var.",
+                        errormsg,
                         file=sys.stderr,
                     )
                     sys.exit(1)
@@ -143,12 +147,18 @@ def add_admin_commands(auth, db, DBUser):
     def validateusernamehashpassword(username):
         if len(username) < 3 or len(username) > 30:
             raise Exception(
-                f'Error: username "{username}" should be between 3 and 30 characters long.'
+                (
+                    f'Error: username "{username}" should be between'
+                    " 3 and 30 characters long."
+                )
             )
         for x in username:
             if x in string.whitespace or x not in string.printable:
                 raise Exception(
-                    f'Error: username "{username}" contains a space or non-printable characters. This is not allowed.'
+                    (
+                        f'Error: username "{username}" contains a space'
+                        " or non-printable characters. This is not allowed."
+                    )
                 )
         password = getpass.getpass("Enter password: ")
         password2 = getpass.getpass("Re-enter password: ")
@@ -165,6 +175,10 @@ def add_admin_commands(auth, db, DBUser):
         for x in passwordHash:
             if x in string.whitespace or x not in string.printable:
                 raise Exception(
-                    f'Error: passwordHash "{username}" contains a space or non-printable characters. This is not allowed. Try again, a different salt may help.y'
+                    (
+                        f'Error: passwordHash "{username}" contains a space or '
+                        "non-printable characters. This is not allowed. Try again, "
+                        "a different salt may help."
+                    )
                 )
         return passwordHash

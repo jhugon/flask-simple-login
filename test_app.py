@@ -2,11 +2,11 @@ import flask
 from flask import Flask
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_sqlalchemy import SQLAlchemy
-# from flask_talisman import Talisman
 
+# from flask_talisman import Talisman
 from flask_simple_login import (
-    setup_auth,
     login_required,
+    setup_auth,
 )
 
 app = Flask(__name__)
