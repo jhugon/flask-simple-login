@@ -12,9 +12,10 @@ from .db import NoResultFound
 from enum import Enum
 
 LOGGER = logging.getLogger(__name__)
-#from flask.logging import default_handler
-#LOGGER.addHandler(default_handler)
-#LOGGER.setLevel(logging.DEBUG)
+# from flask.logging import default_handler
+# LOGGER.addHandler(default_handler)
+# LOGGER.setLevel(logging.DEBUG)
+
 
 class User(UserMixin):
     def __init__(self, username):
@@ -37,10 +38,13 @@ class UserInfoEnum(Enum):
     """
     What type of user info store is being used
     """
+
     USERTEXT = 1
     USERDBTABLE = 2
 
+
 ###########################
+
 
 def do_login(template_name, redirect_to_on_success, db, DBUser):
     form = LoginForm()
@@ -79,12 +83,12 @@ def do_logout(template_name, redirect_to_on_success):
 
 
 def authenticate_user_password(username, password, db, DBUser):
-        passwordHash = load_password_hash(username, db, DBUser)
-        if passwordHash is not None:
-            if check_password_hash(passwordHash, password):
-                return True
-        else:
-            return False
+    passwordHash = load_password_hash(username, db, DBUser)
+    if passwordHash is not None:
+        if check_password_hash(passwordHash, password):
+            return True
+    else:
+        return False
 
 
 def load_password_hash(username, db, DBUser):
@@ -104,7 +108,9 @@ def load_password_hash(username, db, DBUser):
                         break
         case UserInfoEnum.USERDBTABLE:
             try:
-                dbuser = db.session.execute(db.select(DBUser).filter_by(username=username)).scalar_one()
+                dbuser = db.session.execute(
+                    db.select(DBUser).filter_by(username=username)
+                ).scalar_one()
             except NoResultFound:
                 return
             else:
@@ -113,7 +119,9 @@ def load_password_hash(username, db, DBUser):
             raise Exception(f"Unexpected userinfotype: {userinfotype}")
     return passwordHash
 
+
 ###########################
+
 
 def is_safe_url(target):
     ref_url = urlparse(flask.request.host_url)
@@ -121,7 +129,7 @@ def is_safe_url(target):
     return test_url.scheme in ("http", "https") and ref_url.netloc == test_url.netloc
 
 
-def get_user_info_store(userinfostorestr = None) -> UserInfoEnum:
+def get_user_info_store(userinfostorestr=None) -> UserInfoEnum:
     """
     Uses the flask configuration to figure out what type of user info store is being used
     """
@@ -133,4 +141,6 @@ def get_user_info_store(userinfostorestr = None) -> UserInfoEnum:
         case "sqlalchemy":
             return UserInfoEnum.USERDBTABLE
         case _:
-            raise Exception(f"Unexpected value for LOGIN_USER_INFO_STORE_TYPE flask config: '{userinfostorestr}'")
+            raise Exception(
+                f"Unexpected value for LOGIN_USER_INFO_STORE_TYPE flask config: '{userinfostorestr}'"
+            )
