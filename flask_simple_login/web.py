@@ -1,17 +1,16 @@
 import flask
 from flask import Blueprint
+from flask_login import LoginManager, login_required
 
 from .admin import add_admin_commands
 from .db import makeDBTable
 from .users import (
-    LoginManager,
     User,
     UserInfoEnum,
     do_login,
     do_logout,
     get_user_info_store,
     is_safe_url,
-    login_required,
 )
 
 

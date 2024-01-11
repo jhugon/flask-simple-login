@@ -5,11 +5,10 @@ from urllib.parse import urljoin, urlparse
 import flask
 from flask_login import UserMixin, login_user, logout_user
 from flask_wtf import FlaskForm
+from sqlalchemy.exc import NoResultFound
 from werkzeug.security import check_password_hash
 from wtforms import PasswordField, StringField
 from wtforms.validators import DataRequired
-
-from .db import NoResultFound
 
 LOGGER = logging.getLogger(__name__)
 # from flask.logging import default_handler
