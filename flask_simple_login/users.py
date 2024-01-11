@@ -87,8 +87,7 @@ def authenticate_user_password(username, password, db, DBUser):
     if passwordHash is not None:
         if check_password_hash(passwordHash, password):
             return True
-    else:
-        return False
+    return False
 
 
 def load_password_hash(username, db, DBUser):
@@ -112,7 +111,7 @@ def load_password_hash(username, db, DBUser):
                     db.select(DBUser).filter_by(username=username)
                 ).scalar_one()
             except NoResultFound:
-                return
+                return None
             else:
                 passwordHash = dbuser.passwordhash
         case _:

@@ -1,4 +1,4 @@
 [tool.ruff]
 
-select = ["E","W","F","S","I","UP","FBT","A"]
+select = ["E","W","F","S","I","UP","FBT","A","C4","T10","ICN","PIE","Q","RET","RUF"]
 ignore = []
