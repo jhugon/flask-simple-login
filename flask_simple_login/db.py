@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.exc import NoResultFound
+
 
 def makeDBTable(db: SQLAlchemy):
     class DBUser(db.Model):

@@ -1,0 +1,4 @@
+[tool.ruff]
+
+select = ["E","W","F","S","I","UP","FBT","A","C4","T10","ICN","PIE","Q","RET","RUF","N"]
+ignore = ["N802","N803","N806"]

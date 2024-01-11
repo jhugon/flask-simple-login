@@ -3,10 +3,19 @@ from flask import Blueprint
 
 from .admin import add_admin_commands
 from .db import makeDBTable
-from .users import User, do_login, do_logout, is_safe_url, login_required, LoginManager
-from .users import UserInfoEnum, get_user_info_store
+from .users import (
+    LoginManager,
+    User,
+    UserInfoEnum,
+    do_login,
+    do_logout,
+    get_user_info_store,
+    is_safe_url,
+    login_required,
+)
 
-def setup_auth(app,db=None):
+
+def setup_auth(app, db=None):
     "Set configuration keys then run this to setup this blueprint"
 
     auth = Blueprint("auth", __name__, url_prefix="/auth")
@@ -25,20 +34,18 @@ def setup_auth(app,db=None):
     login_manager.init_app(app)
 
     # add Flask CLI Commands
-    add_admin_commands(auth,db,DBUser)
+    add_admin_commands(auth, db, DBUser)
 
     @login_manager.user_loader
     def load_user(user_id):
         return User(user_id)
 
-
     @auth.route("/login", methods=["GET", "POST"])
     def login():
-        next = flask.request.args.get("next")
-        if not is_safe_url(next):
+        nexturl = flask.request.args.get("next")
+        if not is_safe_url(nexturl):
             return flask.abort(400)
-        return do_login("login.html", next or flask.url_for("index"), db, DBUser)
-
+        return do_login("login.html", nexturl or flask.url_for("index"), db, DBUser)
 
     @auth.route("/logout", methods=["GET", "POST"])
     @login_required
