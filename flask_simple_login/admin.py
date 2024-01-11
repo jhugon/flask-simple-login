@@ -1,6 +1,7 @@
 import getpass
 import string
 import sys
+from typing import TYPE_CHECKING
 
 import click
 import flask
@@ -9,12 +10,15 @@ from werkzeug.security import generate_password_hash
 
 from .users import UserInfoEnum, get_user_info_store
 
+if TYPE_CHECKING:
+    from flask_sqlalchemy import SQLAlchemy
 
-def add_admin_commands(auth, db, DBUser):
+
+def add_admin_commands(auth: flask.Blueprint, db: "SQLAlchemy" | None, DBUser) -> None:
     "add admin commands to blueprint 'auth'"
 
     @auth.cli.command("initdb", help="initialize database login user table")
-    def initdb():
+    def initdb() -> None:
         app = flask.current_app
         with app.app_context():
             match get_user_info_store():
@@ -39,7 +43,7 @@ def add_admin_commands(auth, db, DBUser):
         help="Adds user to the current app's user storage. Will ask for password",
     )
     @click.argument("username")
-    def adduser(username):
+    def adduser(username: str) -> None:
         app = flask.current_app
         with app.app_context():
             match get_user_info_store():
@@ -55,7 +59,7 @@ def add_admin_commands(auth, db, DBUser):
         "deleteuser", help="Deletes user from the current app's user storage."
     )
     @click.argument("username")
-    def deleteuser(username):
+    def deleteuser(username: str) -> None:
         app = flask.current_app
         with app.app_context():
             match get_user_info_store():
@@ -80,7 +84,7 @@ def add_admin_commands(auth, db, DBUser):
 
     @auth.cli.command("changeuserpassword", help="Change a user's password.")
     @click.argument("username")
-    def changeuserpassword(username):
+    def changeuserpassword(username: str) -> None:
         app = flask.current_app
         with app.app_context():
             match get_user_info_store():
@@ -104,14 +108,14 @@ def add_admin_commands(auth, db, DBUser):
                     raise Exception("Unexpected UserInfoEnum")
         print("Successfully updated password")
 
-    def adduserdb(app, username):
+    def adduserdb(app: flask.Flask, username: str) -> None:
         with app.app_context():
             passwordhash = validateusernamehashpassword(username)
             dbuser = DBUser(username=username, passwordhash=passwordhash)
             db.session.add(dbuser)
             db.session.commit()
 
-    def append_user_file_line(app, username):
+    def append_user_file_line(app: flask.Flask, username: str) -> None:
         fn = app.config["LOGIN_USER_FILE_PATH"]
         print(f"Adding to userfile: '{fn}'")
         try:
@@ -132,7 +136,7 @@ def add_admin_commands(auth, db, DBUser):
         with open(fn, "a") as userfile:
             userfile.write(line + "\n")
 
-    def make_user_file_line(username):
+    def make_user_file_line(username: str) -> str:
         """
         The user file line is of the form: "<username> <password hash>"
         No spaces or control characters are allowed in the username or password hash
@@ -144,7 +148,7 @@ def add_admin_commands(auth, db, DBUser):
         result += passwordHash
         return result
 
-    def validateusernamehashpassword(username):
+    def validateusernamehashpassword(username: str) -> str:
         if len(username) < 3 or len(username) > 30:
             raise Exception(
                 f'Error: username "{username}" should be between'

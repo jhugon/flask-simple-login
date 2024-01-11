@@ -1,5 +1,6 @@
 import logging
 from enum import Enum
+from typing import TYPE_CHECKING
 from urllib.parse import urljoin, urlparse
 
 import flask
@@ -10,6 +11,10 @@ from werkzeug.security import check_password_hash
 from wtforms import PasswordField, StringField
 from wtforms.validators import DataRequired
 
+if TYPE_CHECKING:
+    from flask_sqlalchemy import SQLAlchemy
+
+
 LOGGER = logging.getLogger(__name__)
 # from flask.logging import default_handler
 # LOGGER.addHandler(default_handler)
@@ -17,10 +22,10 @@ LOGGER = logging.getLogger(__name__)
 
 
 class User(UserMixin):
-    def __init__(self, username):
+    def __init__(self, username: str):
         self.username = username
 
-    def get_id(self):
+    def get_id(self) -> str:
         return self.username
 
 
@@ -45,7 +50,9 @@ class UserInfoEnum(Enum):
 ###########################
 
 
-def do_login(template_name, redirect_to_on_success, db, DBUser):
+def do_login(
+    template_name: str, redirect_to_on_success: str, db: "SQLAlchemy", DBUser
+) -> flask.BaseResponse:
     form = LoginForm()
     if form.validate_on_submit():
         # Login and validate the user.
@@ -72,7 +79,7 @@ def do_login(template_name, redirect_to_on_success, db, DBUser):
     return flask.render_template(template_name, form=form)
 
 
-def do_logout(template_name, redirect_to_on_success):
+def do_logout(template_name: str, redirect_to_on_success: str) -> flask.BaseResponse:
     form = LogoutForm()
     if form.validate_on_submit():
         logout_user()
@@ -81,7 +88,9 @@ def do_logout(template_name, redirect_to_on_success):
     return flask.render_template(template_name, form=form)
 
 
-def authenticate_user_password(username, password, db, DBUser):
+def authenticate_user_password(
+    username: str, password: str, db: "SQLAlchemy", DBUser
+) -> bool:
     passwordHash = load_password_hash(username, db, DBUser)
     if passwordHash is not None:
         if check_password_hash(passwordHash, password):
@@ -89,7 +98,7 @@ def authenticate_user_password(username, password, db, DBUser):
     return False
 
 
-def load_password_hash(username, db, DBUser):
+def load_password_hash(username: str, db: "SQLAlchemy", DBUser) -> str | None:
     passwordHash = None
     userinfotype = get_user_info_store()
     match userinfotype:
@@ -121,13 +130,15 @@ def load_password_hash(username, db, DBUser):
 ###########################
 
 
-def is_safe_url(target):
+def is_safe_url(target: str | None) -> bool:
+    if target is None:
+        return False
     ref_url = urlparse(flask.request.host_url)
     test_url = urlparse(urljoin(flask.request.host_url, target))
     return test_url.scheme in ("http", "https") and ref_url.netloc == test_url.netloc
 
 
-def get_user_info_store(userinfostorestr=None) -> UserInfoEnum:
+def get_user_info_store(userinfostorestr: (None | str) = None) -> UserInfoEnum:
     """
     Uses the flask configuration to figure out what type of
     user info store is being used.
