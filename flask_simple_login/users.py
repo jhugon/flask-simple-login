@@ -143,8 +143,6 @@ def get_user_info_store(userinfostorestr=None) -> UserInfoEnum:
             return UserInfoEnum.USERDBTABLE
         case _:
             raise Exception(
-                (
-                    "Unexpected value for LOGIN_USER_INFO_STORE_TYPE flask config: "
-                    f"'{userinfostorestr}'"
-                )
+                "Unexpected value for LOGIN_USER_INFO_STORE_TYPE flask config: "
+                f"'{userinfostorestr}'"
             )

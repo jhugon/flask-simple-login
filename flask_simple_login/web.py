@@ -42,10 +42,10 @@ def setup_auth(app, db=None):
 
     @auth.route("/login", methods=["GET", "POST"])
     def login():
-        next = flask.request.args.get("next")
-        if not is_safe_url(next):
+        nexturl = flask.request.args.get("next")
+        if not is_safe_url(nexturl):
             return flask.abort(400)
-        return do_login("login.html", next or flask.url_for("index"), db, DBUser)
+        return do_login("login.html", nexturl or flask.url_for("index"), db, DBUser)
 
     @auth.route("/logout", methods=["GET", "POST"])
     @login_required

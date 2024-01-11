@@ -115,7 +115,7 @@ def add_admin_commands(auth, db, DBUser):
         fn = app.config["LOGIN_USER_FILE_PATH"]
         print(f"Adding to userfile: '{fn}'")
         try:
-            with open(fn, "r") as userfile:
+            with open(fn) as userfile:
                 for line in userfile:
                     line = line.strip("\n")
                     line_split = line.split(" ")
@@ -147,18 +147,14 @@ def add_admin_commands(auth, db, DBUser):
     def validateusernamehashpassword(username):
         if len(username) < 3 or len(username) > 30:
             raise Exception(
-                (
-                    f'Error: username "{username}" should be between'
-                    " 3 and 30 characters long."
-                )
+                f'Error: username "{username}" should be between'
+                " 3 and 30 characters long."
             )
         for x in username:
             if x in string.whitespace or x not in string.printable:
                 raise Exception(
-                    (
-                        f'Error: username "{username}" contains a space'
-                        " or non-printable characters. This is not allowed."
-                    )
+                    f'Error: username "{username}" contains a space'
+                    " or non-printable characters. This is not allowed."
                 )
         password = getpass.getpass("Enter password: ")
         password2 = getpass.getpass("Re-enter password: ")
@@ -175,10 +171,8 @@ def add_admin_commands(auth, db, DBUser):
         for x in passwordHash:
             if x in string.whitespace or x not in string.printable:
                 raise Exception(
-                    (
-                        f'Error: passwordHash "{username}" contains a space or '
-                        "non-printable characters. This is not allowed. Try again, "
-                        "a different salt may help."
-                    )
+                    f'Error: passwordHash "{username}" contains a space or '
+                    "non-printable characters. This is not allowed. Try again, "
+                    "a different salt may help."
                 )
         return passwordHash
