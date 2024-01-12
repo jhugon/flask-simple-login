@@ -16,13 +16,6 @@ app.debug = True
 app.config["SECRET_KEY"] = b"dummy"
 app.config["SESSION_PROTECTION"] = "strong"
 
-### Test with text file
-# app.config["LOGIN_USER_INFO_STORE_TYPE"] = "textfile"
-# app.config["LOGIN_USER_FILE_PATH"] = "userfile.txt"
-# db = None
-
-## Test with SQLite db
-app.config["LOGIN_USER_INFO_STORE_TYPE"] = "sqlalchemy"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
 db = SQLAlchemy()
 db.init_app(app)
@@ -35,12 +28,12 @@ toolbar = DebugToolbarExtension(app)
 @app.route("/")
 @app.route("/index")
 @app.route("/index.html")
-def index() -> flask.BaseResponse:
+def index() -> flask.app.BaseResponse | str:
     return flask.render_template("index.html")
 
 
 @app.route("/restricted")
 @app.route("/restricted.html")
 @login_required
-def restricted() -> flask.BaseResponse:
+def restricted() -> flask.app.BaseResponse | str:
     return flask.render_template("restricted.html")

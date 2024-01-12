@@ -37,22 +37,8 @@ python -c 'import secrets; print(secrets.token_hex())'
 
 ## User Info Storage
 
-You must either configure users to be loaded from a text file or a SQLAlchemy database by setting:
-
-```python
-app.config["LOGIN_USER_INFO_STORE_TYPE"] = "textfile"
-# or
-app.config["LOGIN_USER_INFO_STORE_TYPE"] = "sqlalchemy"
-```
-
-For the text file, you must also set:
-
-```python
-app.config["LOGIN_USER_FILE_PATH"] = "userfile.txt"
-db = None
-```
-
-For SQLAlchemy, you must also set the database URI.
+You must either configure a SQLAlchemy database to store user info. This can
+even be a sqlite db. You must set the database URI:
 
 ```python
 app.config["SQLALCHEMY_DATABASE_URI"] = "..."
@@ -83,15 +69,8 @@ flask auth adduser
 
 (You may need to set the env var `FLASK_APP` to your flask app)
 
-The userfile will be printed, and you will be asked for a username, the
-password, and to confirm the password.  You can check that your new user was
-added to the user file by inspecting its contents.
-
-The user file line is of the form: `<username> <password hash>` No spaces or
-control characters are allowed in the username or password hash
-
-For the DB, `flask auth deleteuser` and `flask auth changeuserpassword`
-commands are also provided.
+Other administrative commands are: `flask auth deleteuser` and `flask auth
+changeuserpassword`.
 
 ## Running the test server in this package
 
