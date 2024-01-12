@@ -8,8 +8,6 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Development Status :: 4 - Beta",
 ]
-zip_safe = true
-packages = "flask_simple_login"
 dependencies = [
     "Flask",
     "flask-login",
@@ -29,6 +27,9 @@ requires-python = ">= 3.11"
 [build-system]
 requires = ["setuptools >= 61.0"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["flask_simple_login"]
 
 [tool.ruff]
 select = ["E","W","F","S","I","UP","FBT","A","C4","T10","ICN","PIE","Q","RET","RUF","N"]
