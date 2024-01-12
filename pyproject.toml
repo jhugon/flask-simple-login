@@ -1,6 +1,6 @@
 [project]
 name = "Flask-Simple-Login"
-version = "3.1.2"
+version = "4.0.0"
 description = "Simple login system for Flask"
 readme = "README.md"
 license = { text = "BSDv2" }
@@ -22,7 +22,7 @@ dependencies = [
     "SQLAlchemy>=2.0.0",
     "Flask-SQLAlchemy>=3.1.0",
 ]
-requires-python = ">= 3.11"
+requires-python = ">= 3.10"
 
 [build-system]
 requires = ["setuptools >= 61.0"]
