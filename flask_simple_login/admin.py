@@ -68,6 +68,14 @@ def add_admin_commands(auth: flask.Blueprint, db: "SQLAlchemy", DBUser) -> None:
                 db.session.commit()
         print("Successfully updated password")
 
+    @auth.cli.command("listusers", help="List all users.")
+    def listusers() -> None:
+        app = flask.current_app
+        with app.app_context():
+            users = db.session.execute(db.select(DBUser)).scalars()
+            for user in users:
+                print(user.username)
+
     def adduserdb(app: flask.Flask, username: str) -> None:
         with app.app_context():
             passwordhash = validateusernamehashpassword(username)
