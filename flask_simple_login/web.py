@@ -36,7 +36,7 @@ def setup_auth(app: flask.Flask, db: "SQLAlchemy") -> None:
         return User(user_id)
 
     @auth.route("/login", methods=["GET", "POST"])
-    def login() -> flask.BaseResponse:
+    def login() -> flask.app.BaseResponse | str:
         nexturl = flask.request.args.get("next")
         if not is_safe_url(nexturl):
             return flask.abort(400)
@@ -44,7 +44,7 @@ def setup_auth(app: flask.Flask, db: "SQLAlchemy") -> None:
 
     @auth.route("/logout", methods=["GET", "POST"])
     @login_required
-    def logout() -> flask.BaseResponse:
+    def logout() -> flask.app.BaseResponse | str:
         redirect_to = flask.url_for("index")
         return do_logout("logout.html", redirect_to)
 

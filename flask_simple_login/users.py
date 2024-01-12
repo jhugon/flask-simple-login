@@ -42,7 +42,7 @@ class LogoutForm(FlaskForm):
 
 def do_login(
     template_name: str, redirect_to_on_success: str, db: "SQLAlchemy", DBUser
-) -> flask.BaseResponse:
+) -> flask.app.BaseResponse | str:
     form = LoginForm()
     if form.validate_on_submit():
         # Login and validate the user.
@@ -69,7 +69,9 @@ def do_login(
     return flask.render_template(template_name, form=form)
 
 
-def do_logout(template_name: str, redirect_to_on_success: str) -> flask.BaseResponse:
+def do_logout(
+    template_name: str, redirect_to_on_success: str
+) -> flask.app.BaseResponse | str:
     form = LogoutForm()
     if form.validate_on_submit():
         logout_user()
@@ -103,8 +105,8 @@ def load_password_hash(username: str, db: "SQLAlchemy", DBUser) -> str | None:
 
 
 def is_safe_url(target: str | None) -> bool:
-    if target is None:
-        return False
+    if target is None:  # None is safe and will be redirected
+        return True
     ref_url = urlparse(flask.request.host_url)
     test_url = urlparse(urljoin(flask.request.host_url, target))
     return test_url.scheme in ("http", "https") and ref_url.netloc == test_url.netloc

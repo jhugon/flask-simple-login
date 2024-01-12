@@ -28,12 +28,12 @@ toolbar = DebugToolbarExtension(app)
 @app.route("/")
 @app.route("/index")
 @app.route("/index.html")
-def index() -> flask.BaseResponse:
+def index() -> flask.app.BaseResponse | str:
     return flask.render_template("index.html")
 
 
 @app.route("/restricted")
 @app.route("/restricted.html")
 @login_required
-def restricted() -> flask.BaseResponse:
+def restricted() -> flask.app.BaseResponse | str:
     return flask.render_template("restricted.html")
