@@ -1,9 +1,39 @@
-[tool.ruff]
+[project]
+name = "Flask-Simple-Login"
+version = "3.1.2"
+description = "Simple login system for Flask"
+readme = "README.md"
+license = { text = "BSDv2" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Development Status :: 4 - Beta",
+]
+zip_safe = true
+packages = "flask_simple_login"
+dependencies = [
+    "Flask",
+    "flask-login",
+    "Flask-WTF",
+    "wtforms",
+    "wtforms_components",
+    "werkzeug",
+    "flask-talisman",
+    "flask-debugtoolbar",
+    "pre-commit",
+    "bandit",
+    "SQLAlchemy>=2.0.0",
+    "Flask-SQLAlchemy>=3.1.0",
+]
+requires-python = ">= 3.11"
 
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
 select = ["E","W","F","S","I","UP","FBT","A","C4","T10","ICN","PIE","Q","RET","RUF","N"]
 ignore = ["N802","N803","N806"]
 
 [tool.mypy]
-
 files = ["flask_simple_login/","test_app.py"]
 ignore_missing_imports = true
