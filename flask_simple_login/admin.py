@@ -64,7 +64,7 @@ def add_admin_commands(auth: flask.Blueprint, db: "SQLAlchemy", DBUser) -> None:
                 sys.exit(1)
             else:
                 print("NEW PASSWORD:")
-                dbuser.passwordhash = validateusernamehashpassword(username)
+                dbuser.passwordhash = promptvalidateandhashpassword()
                 db.session.commit()
         print("Successfully updated password")
 
@@ -78,40 +78,63 @@ def add_admin_commands(auth: flask.Blueprint, db: "SQLAlchemy", DBUser) -> None:
 
     def adduserdb(app: flask.Flask, username: str) -> None:
         with app.app_context():
-            passwordhash = validateusernamehashpassword(username)
+            validateusername(username)
+            passwordhash = promptvalidateandhashpassword()
             dbuser = DBUser(username=username, passwordhash=passwordhash)
             db.session.add(dbuser)
             db.session.commit()
 
-    def validateusernamehashpassword(username: str) -> str:
-        if len(username) < 3 or len(username) > 30:
-            raise Exception(
-                f'Error: username "{username}" should be between'
-                " 3 and 30 characters long."
-            )
-        for x in username:
-            if x in string.whitespace or x not in string.printable:
-                raise Exception(
-                    f'Error: username "{username}" contains a space'
-                    " or non-printable characters. This is not allowed."
-                )
-        password = getpass.getpass("Enter password: ")
-        password2 = getpass.getpass("Re-enter password: ")
-        if password != password2:
-            print("Error: passwords don't match! Exiting.", file=sys.stderr)
-            sys.exit(1)
-        if len(password) < 3 or len(password) > 30:
-            raise Exception(
-                "Error: password should be between 8 and 30 characters long."
-            )
-        passwordHash = generate_password_hash(
-            password, "pbkdf2:sha256:100000", salt_length=16
+
+def validateusername(username: str) -> None:
+    minlen = 3
+    maxlen = 30
+    if len(username) < minlen or len(username) > maxlen:
+        raise Exception(
+            f'Error: username "{username}" should be between'
+            " {minlen} and {maxlen} characters long."
         )
-        for x in passwordHash:
-            if x in string.whitespace or x not in string.printable:
-                raise Exception(
-                    f'Error: passwordHash "{username}" contains a space or '
-                    "non-printable characters. This is not allowed. Try again, "
-                    "a different salt may help."
-                )
-        return passwordHash
+    for x in username:
+        if x in string.whitespace or x not in string.printable:
+            raise Exception(
+                f'Error: username "{username}" contains a space'
+                " or non-printable characters. This is not allowed."
+            )
+
+
+def validatepassword(password: str) -> None:
+    minlen = 8
+    maxlen = 30
+    if len(password) < minlen or len(password) > maxlen:
+        raise Exception(
+            "Error: password should be between {minlen} and {maxlen} characters long."
+        )
+    for x in password:
+        if x in string.whitespace or x not in string.printable:
+            raise Exception(
+                "Error: password contains a space"
+                " or non-printable characters. This is not allowed."
+            )
+
+
+def hashpassword(password: str) -> str:
+    passwordHash = generate_password_hash(
+        password, "pbkdf2:sha256:100000", salt_length=16
+    )
+    for x in passwordHash:
+        if x in string.whitespace or x not in string.printable:
+            raise Exception(
+                "Error: passwordHash contains a space or "
+                "non-printable characters. This is not allowed. Try again, "
+                "a different salt may help."
+            )
+    return passwordHash
+
+
+def promptvalidateandhashpassword() -> str:
+    password = getpass.getpass("Enter password: ")
+    password2 = getpass.getpass("Re-enter password: ")
+    if password != password2:
+        print("Error: passwords don't match! Exiting.", file=sys.stderr)
+        sys.exit(1)
+    validatepassword(password)
+    return hashpassword(password)
