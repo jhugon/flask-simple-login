@@ -36,5 +36,5 @@ select = ["E","W","F","S","I","UP","FBT","A","C4","T10","ICN","PIE","Q","RET","R
 ignore = ["N802","N803","N806"]
 
 [tool.mypy]
-files = ["flask_simple_login/","test_app.py"]
+files = ["flask_simple_login/","example_app.py","tests/"]
 ignore_missing_imports = true
