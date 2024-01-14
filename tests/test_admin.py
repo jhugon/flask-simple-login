@@ -40,6 +40,9 @@ def test_validatepassword() -> None:
         else:
             with pytest.raises(Exception):
                 validatepassword("a" * i)
+    for x in string.whitespace:
+        with pytest.raises(Exception):
+            validatepassword(x * minlen)
     for x in generate_nonprintable():
         with pytest.raises(Exception):
             validatepassword(x * minlen)
